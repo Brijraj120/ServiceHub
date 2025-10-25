@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Request {{ service.name }} - ServiceHub{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h2 class="mb-0">Request {{ service.name }}</h2>
+                <small class="text-muted">{{ service.description }}</small>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('submit_request') }}" method="post" novalidate>
+                    <input type="hidden" name="service_id" value="{{ service.id }}">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="customer_name" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="customer_name" name="customer_name" required aria-required="true">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="customer_email" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="customer_email" name="customer_email" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="customer_phone" class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" id="customer_phone" name="customer_phone" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="urgency" class="form-label">Urgency</label>
+                            <select class="form-select" id="urgency" name="urgency">
+                                <option value="Low">Low - Within a week</option>
+                                <option value="Medium" selected>Medium - Within 2-3 days</option>
+                                <option value="High">High - Within 24 hours</option>
+                                <option value="Emergency">Emergency - As soon as possible</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Service Address *</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                        <div class="form-text">Include apartment or landmark to help the provider find you faster.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description of Service Needed</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Please provide details about the service you need..."></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

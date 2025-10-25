@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Register - ServiceHub{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h3 class="mb-0">Create an account</h3>
+                <small class="text-muted">Join to book services faster</small>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('register') }}">
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Register as</label>
+                        <select class="form-select" id="role" name="role" onchange="toggleServiceType()">
+                            <option value="user" selected>Customer / User</option>
+                            <option value="client">Service Provider / Client</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3" id="serviceTypeField" style="display: none;">
+                        <label for="service_type" class="form-label">Service Type *</label>
+                        <select class="form-select" id="service_type" name="service_type">
+                            <option value="">Select your service</option>
+                            {% for service in services %}
+                            <option value="{{ service.name }}">{{ service.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Select the service you provide</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('login') }}">Already have an account?</a>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleServiceType() {
+    const roleSelect = document.getElementById('role');
+    const serviceTypeField = document.getElementById('serviceTypeField');
+    const serviceTypeSelect = document.getElementById('service_type');
+    
+    if (roleSelect.value === 'client') {
+        serviceTypeField.style.display = 'block';
+        serviceTypeSelect.required = true;
+    } else {
+        serviceTypeField.style.display = 'none';
+        serviceTypeSelect.required = false;
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    toggleServiceType();
+});
+</script>
+{% endblock %}

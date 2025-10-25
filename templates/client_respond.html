@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Respond to Request - ServiceHub{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-chat-dots me-2"></i>
+                        Respond to Service Request
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Request Details -->
+                    <div class="alert alert-light border">
+                        <h6 class="alert-heading">Request Details</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Customer:</strong> {{ request.customer_name }}<br>
+                                <strong>Phone:</strong> {{ request.customer_phone }}<br>
+                                <strong>Email:</strong> {{ request.customer_email }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Service:</strong> {{ request.service.name }}<br>
+                                <strong>Urgency:</strong> 
+                                <span class="badge bg-{% if request.urgency == 'Emergency' %}danger{% elif request.urgency == 'High' %}warning{% elif request.urgency == 'Medium' %}info{% else %}secondary{% endif %}">
+                                    {{ request.urgency or 'Normal' }}
+                                </span><br>
+                                <strong>Submitted:</strong> {{ request.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                        </div>
+                        <hr>
+                        <strong>Address:</strong> {{ request.address }}<br>
+                        <strong>Description:</strong> {{ request.description or 'No additional details provided.' }}
+                    </div>
+
+                    <!-- Response Form -->
+                    <form method="post" action="{{ url_for('client_respond_request', req_id=request.id) }}">
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">
+                                <i class="bi bi-pencil me-1"></i>Your Response
+                            </label>
+                            <textarea class="form-control" id="message" name="message" rows="6" 
+                                      placeholder="Write your response to the customer. You can provide estimates, ask for more details, schedule an appointment, or provide instructions..."
+                                      required></textarea>
+                            <div class="form-text">
+                                This message will be sent to the customer. Be professional and clear in your communication.
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('client_requests') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Requests
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send me-1"></i>Send Response
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

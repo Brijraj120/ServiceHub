@@ -1,0 +1,7 @@
+1> python -m pip install flask
+1> python -m pip install flask_sqlalchemy
+1> python -m pip install pandas
+2> python app.py
+5> python export_requests.py
+6> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+3> .\venv\Scripts\Activate.ps1

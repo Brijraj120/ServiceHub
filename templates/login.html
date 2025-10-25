@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ServiceHub{% endblock %}
+
+{% block content %}
+{%- set role = request.args.get('role', 'user') -%}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6">
+        {% if role == 'client' %}
+        <div class="card shadow-sm client-login">
+            <div class="card-header bg-light">
+                <h3 class="mb-0 text-primary">Client Portal</h3>
+                <small class="text-muted">Sign in to manage customer requests</small>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('login') }}">
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                    <input type="hidden" name="role" value="client">
+                    <div class="mb-3">
+                        <label for="username_or_email" class="form-label">Client username or Email</label>
+                        <input type="text" class="form-control" id="username_or_email" name="username_or_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('login') }}">Customer login</a>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="card shadow-sm user-login">
+            <div class="card-header">
+                <h3 class="mb-0">Sign in to your account</h3>
+                <small class="text-muted">Access your bookings and requests</small>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('login') }}">
+                    <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+                    <div class="mb-2 text-muted">This single login form works for both customers and clients.</div>
+                    <div class="mb-3">
+                        <label for="username_or_email" class="form-label">Username or Email</label>
+                        <input type="text" class="form-control" id="username_or_email" name="username_or_email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('register') }}">Create an account</a>
+                        <a href="{{ url_for('login') }}?role=client" class="btn btn-outline-secondary">Client Login</a>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
