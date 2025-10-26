@@ -1,326 +1,419 @@
-Client Dashboard - ServiceHub
-<div class="container-fluid py-4">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-1">Client Dashboard</h1>
-                    <p class="text-muted mb-0">Welcome back, {{ session.username }}! Manage your {{ client_service_type }} service requests.</p>
-                </div>
-                <div class="text-end">
-                    <span class="badge bg-primary fs-6">{{ client_service_type }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="row mb-5">
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start-4 border-start-primary h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Total Requests</h6>
-                            <h3 class="mb-0">{{ total_requests }}</h3>
-                            <small class="text-muted">All time</small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-inbox fs-1 text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start-4 border-start-warning h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Pending</h6>
-                            <h3 class="mb-0">{{ pending_requests }}</h3>
-                            <small class="text-muted">Awaiting response</small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-clock fs-1 text-warning"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start-4 border-start-success h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Accepted</h6>
-                            <h3 class="mb-0">
-                                {{ accepted_count|length }}
-                            </h3>
-                            <small class="text-muted">Confirmed jobs</small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-check-circle fs-1 text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start-4 border-start-info h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="text-muted fw-semibold">Service Type</h6>
-                            <h6 class="mb-0 text-primary">{{ client_service_type }}</h6>
-                            <small class="text-muted">Your specialty</small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            <i class="bi bi-tools fs-1 text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <a href="{{ url_for('client_requests') }}" class="btn btn-primary w-100 h-100 py-3">
-                                <i class="bi bi-inbox display-6 d-block mb-2"></i>
-                                View All Requests
-                                <small class="d-block text-light opacity-75">Manage all service requests</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="{{ url_for('index') }}#services" class="btn btn-outline-primary w-100 h-100 py-3">
-                                <i class="bi bi-eye display-6 d-block mb-2"></i>
-                                View Services
-                                <small class="d-block text-muted">See available services</small>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="#" class="btn btn-outline-secondary w-100 h-100 py-3">
-                                <i class="bi bi-person display-6 d-block mb-2"></i>
-                                My Profile
-                                <small class="d-block text-muted">Update your information</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Requests -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="bi bi-clock-history me-2"></i>
-                        Recent Service Requests
-                    </h5>
-                    <div>
-                        <span class="badge bg-primary">{{ requests|length }} total</span>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="border-0">Request ID</th>
-                                    <th class="border-0">Customer Details</th>
-                                    <th class="border-0">Service Info</th>
-                                    <th class="border-0">Urgency</th>
-                                    <th class="border-0">Date & Time</th>
-                                    <th class="border-0">Status</th>
-                                    <th class="border-0 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="table-success table-info">
-                                    <td>
-                                        <strong>#{{ req.id }}</strong>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-start">
-                                            <div class="flex-grow-1">
-                                                <strong class="d-block">{{ req.customer_name }}</strong>
-                                                <small class="text-muted d-block">
-                                                    <i class="bi bi-telephone me-1"></i>{{ req.customer_phone }}
-                                                </small>
-                                                <small class="text-muted">
-                                                    <i class="bi bi-envelope me-1"></i>{{ req.customer_email }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <small class="text-muted d-block">
-                                            <i class="bi bi-geo-alt me-1"></i>
-                                            {{ req.address|truncate(25) }}
-                                        </small>
-                                        <small class="text-muted d-block mt-1">
-                                            {{ req.description|truncate(30) }}
-                                        </small>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-danger warning info secondary">
-                                            <i class="bi bi-exclamation-triangle clock calendar me-1"></i>
-                                            {{ req.urgency or 'Normal' }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <small class="d-block">{{ req.created_at.strftime('%m/%d/%Y') }}</small>
-                                        <small class="text-muted">{{ req.created_at.strftime('%I:%M %p') }}</small>
-                                    </td>
-                                    <td>
-                                                <span class="badge bg-success">
-                                                    <i class="bi bi-check-circle me-1"></i>Accepted
-                                                </span>
-                                                <span class="badge bg-info">
-                                                    <i class="bi bi-chat-dots me-1"></i>Responded
-                                                </span>
-                                            <span class="badge bg-warning">
-                                                <i class="bi bi-clock me-1"></i>Pending
-                                            </span>                                       
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <form method="post" action="{{ url_for('client_accept_request', req_id=req.id) }}" class="d-inline">
-                                                <button class="btn btn-success btn-sm" type="submit" 
-                                                        disabled
-                                                        title="Already Accepted Accept Request">
-                                                    <i class="bi bi-check-lg"></i>
-                                                    <span class="d-none d-md-inline">Accepted Accept</span>
-                                                </button>
-                                            </form>
-                                            <a href="{{ url_for('client_respond_request', req_id=req.id) }}" class="btn btn-primary btn-sm ms-1"
-                                               title="Respond to Request">
-                                                <i class="bi bi-chat-dots"></i>
-                                                <span class="d-none d-md-inline">Respond</span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                               
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="card-footer text-center">
-                        <a href="{{ url_for('client_requests') }}" class="btn btn-outline-primary btn-sm">
-                            <i class="bi bi-list-ul me-1"></i>View All {{ requests|length }} Requests
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - ServiceHub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="site-bg">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="bi bi-house-door me-1"></i>Home
                         </a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>john_doe
+                            <small class="d-block text-muted" style="font-size:0.6rem">
+                                Client • Plumbing
+                            </small>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li>
+                                <a class="dropdown-item" href="/client/dashboard">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                    <small class="text-muted d-block">Plumbing</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/client/requests">
+                                    <i class="bi bi-inbox me-2"></i>Service Requests
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2"></i>Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="container-fluid py-4">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-1">Client Dashboard</h1>
+                            <p class="text-muted mb-0">Welcome back, john_doe! Manage your Plumbing service requests.</p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary fs-6">Plumbing</span>
+                        </div>
                     </div>
-                    
-                    <div class="text-center py-5">
-                        <i class="bi bi-inbox display-1 text-muted mb-3"></i>
-                        <h5 class="text-muted">No Service Requests Yet</h5>
-                        <p class="text-muted mb-4">When customers request {{ client_service_type }} services, they will appear here.</p>
-                        <div class="row justify-content-center">
-                            <div class="col-md-6">
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    <strong>Getting Started:</strong> Share your ServiceHub profile with potential customers to start receiving requests.
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-5">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start-4 border-start-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-muted fw-semibold">Total Requests</h6>
+                                    <h3 class="mb-0">12</h3>
+                                    <small class="text-muted">All time</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-inbox fs-1 text-primary"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start-4 border-start-warning h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-muted fw-semibold">Pending</h6>
+                                    <h3 class="mb-0">3</h3>
+                                    <small class="text-muted">Awaiting response</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-clock fs-1 text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start-4 border-start-success h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-muted fw-semibold">Accepted</h6>
+                                    <h3 class="mb-0">7</h3>
+                                    <small class="text-muted">Confirmed jobs</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-check-circle fs-1 text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-start-4 border-start-info h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <h6 class="text-muted fw-semibold">Service Type</h6>
+                                    <h6 class="mb-0 text-primary">Plumbing</h6>
+                                    <small class="text-muted">Your specialty</small>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-tools fs-1 text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Emergency Contacts (for emergency services) -->
-    
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card border-danger">
-                <div class="card-header bg-danger text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Emergency Contacts
-                    </h5>
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <a href="/client/requests" class="btn btn-primary w-100 h-100 py-3">
+                                        <i class="bi bi-inbox display-6 d-block mb-2"></i>
+                                        View All Requests
+                                        <small class="d-block text-light opacity-75">Manage all service requests</small>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="/#services" class="btn btn-outline-primary w-100 h-100 py-3">
+                                        <i class="bi bi-eye display-6 d-block mb-2"></i>
+                                        View Services
+                                        <small class="d-block text-muted">See available services</small>
+                                    </a>
+                                </div>
+                                <div class="col-md-4">
+                                    <a href="#" class="btn btn-outline-secondary w-100 h-100 py-3">
+                                        <i class="bi bi-person display-6 d-block mb-2"></i>
+                                        My Profile
+                                        <small class="d-block text-muted">Update your information</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <i class="bi bi-telephone-fill text-danger display-6 d-block mb-2"></i>
-                            <h6>Emergency Hotline</h6>
-                            <p class="mb-1">+91 98765 43210</p>
-                            <small class="text-muted">24/7 Available</small>
+            </div>
+
+            <!-- Recent Requests -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock-history me-2"></i>
+                                Recent Service Requests
+                            </h5>
+                            <div>
+                                <span class="badge bg-primary">5 total</span>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <i class="bi bi-hospital text-danger display-6 d-block mb-2"></i>
-                            <h6>Dispatch Center</h6>
-                            <p class="mb-1">dispatch@servicehub.com</p>
-                            <small class="text-muted">Coordination</small>
-                        </div>
-                        <div class="col-md-4">
-                            <i class="bi bi-shield-check text-danger display-6 d-block mb-2"></i>
-                            <h6>Emergency Protocol</h6>
-                            <p class="mb-1">Follow established procedures</p>
-                            <small class="text-muted">Safety first</small>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="border-0">Request ID</th>
+                                            <th class="border-0">Customer Details</th>
+                                            <th class="border-0">Service Info</th>
+                                            <th class="border-0">Urgency</th>
+                                            <th class="border-0">Date & Time</th>
+                                            <th class="border-0">Status</th>
+                                            <th class="border-0 text-center">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-success">
+                                            <td>
+                                                <strong>#101</strong>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <strong class="d-block">Sarah Johnson</strong>
+                                                        <small class="text-muted d-block">
+                                                            <i class="bi bi-telephone me-1"></i>555-0123
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-envelope me-1"></i>sarah@email.com
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted d-block">
+                                                    <i class="bi bi-geo-alt me-1"></i>
+                                                    123 Main St, Apt 4B
+                                                </small>
+                                                <small class="text-muted d-block mt-1">
+                                                    Leaky faucet in kitchen
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    <i class="bi bi-calendar me-1"></i>
+                                                    Medium
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="d-block">03/15/2025</small>
+                                                <small class="text-muted">10:30 AM</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Accepted
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <form method="post" action="/client/accept/101" class="d-inline">
+                                                        <button class="btn btn-success btn-sm" type="submit" disabled title="Already Accepted">
+                                                            <i class="bi bi-check-lg"></i>
+                                                            <span class="d-none d-md-inline">Accepted</span>
+                                                        </button>
+                                                    </form>
+                                                    <a href="/client/respond/101" class="btn btn-primary btn-sm ms-1" title="Respond to Request">
+                                                        <i class="bi bi-chat-dots"></i>
+                                                        <span class="d-none d-md-inline">Respond</span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>#102</strong>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-start">
+                                                    <div class="flex-grow-1">
+                                                        <strong class="d-block">Mike Chen</strong>
+                                                        <small class="text-muted d-block">
+                                                            <i class="bi bi-telephone me-1"></i>555-0456
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-envelope me-1"></i>mike@email.com
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted d-block">
+                                                    <i class="bi bi-geo-alt me-1"></i>
+                                                    456 Oak Avenue
+                                                </small>
+                                                <small class="text-muted d-block mt-1">
+                                                    Clogged bathroom sink
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-clock me-1"></i>
+                                                    High
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <small class="d-block">03/16/2025</small>
+                                                <small class="text-muted">02:15 PM</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning">
+                                                    <i class="bi bi-clock me-1"></i>Pending
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <form method="post" action="/client/accept/102" class="d-inline">
+                                                        <button class="btn btn-success btn-sm" type="submit" title="Accept Request">
+                                                            <i class="bi bi-check-lg"></i>
+                                                            <span class="d-none d-md-inline">Accept</span>
+                                                        </button>
+                                                    </form>
+                                                    <a href="/client/respond/102" class="btn btn-primary btn-sm ms-1" title="Respond to Request">
+                                                        <i class="bi bi-chat-dots"></i>
+                                                        <span class="d-none d-md-inline">Respond</span>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a href="/client/requests" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-list-ul me-1"></i>View All 5 Requests
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-</div>
 
-<style>
-.card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: box-shadow 0.15s ease-in-out;
-}
+    <!-- Footer -->
+    <footer class="text-center text-lg-start mt-5">
+        <div class="container p-5">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+                    </h5>
+                    <p>
+                        Your one-stop platform for all services. Quick, reliable, and always there when you need us.
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact Us</h5>
+                    <p class="contact-info">
+                        <i class="bi bi-envelope-fill"></i>help@servicehub.com<br>
+                        <i class="bi bi-telephone-fill"></i>+91 98765 43210<br>
+                        <i class="bi bi-geo-alt-fill"></i>123 Service Street, Anytown, ST 12345
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3">
+            © 2025 ServiceHub | Made with <i class="bi bi-heart-fill text-danger"></i> for our community
+        </div>
+    </footer>
 
-.card:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-.border-start-4 {
-    border-left-width: 4px !important;
-}
-
-.table th {
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.btn-group-sm > .btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-}
-
-@media (max-width: 768px) {
-    .display-6 {
-        font-size: 2rem;
+    <style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: box-shadow 0.15s ease-in-out;
     }
-    
-    .table-responsive {
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .border-start-4 {
+        border-left-width: 4px !important;
+    }
+
+    .table th {
+        font-weight: 600;
         font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
-    
-    .btn-group-sm > .btn span {
-        display: none;
+
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
     }
-}
-</style>
+
+    @media (max-width: 768px) {
+        .display-6 {
+            font-size: 2rem;
+        }
+        
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+        
+        .btn-group-sm > .btn span {
+            display: none;
+        }
+    }
+    </style>
+</body>
+</html>
