@@ -1,178 +1,244 @@
-{% extends "base.html" %}
-
-{% block title %}Home - ServiceHub{% endblock %}
-
-{% block content %}
-<section class="hero py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-7">
-                <h1 class="display-5 fw-bold">
-                    {% if session.get('role') == 'client' %}
-                    Welcome to Your Service Dashboard
-                    {% else %}
-                    Reliable services, just a few clicks away
-                    {% endif %}
-                </h1>
-                <p class="lead text-muted mb-4">
-                    {% if session.get('role') == 'client' %}
-                    Manage your {{ session.get('service_type') }} service requests efficiently and professionally.
-                    {% else %}
-                    Book trusted professionals for plumbing, electrical, cleaning and more. Fast responses for emergencies.
-                    {% endif %}
-                </p>
-                {% if session.get('role') == 'client' %}
-                <a href="{{ url_for('client_dashboard') }}" class="btn btn-primary btn-lg me-2">
-                    <i class="bi bi-speedometer2 me-1"></i>Go to Dashboard
-                </a>
-                <a href="{{ url_for('client_requests') }}" class="btn btn-outline-primary btn-lg">
-                    <i class="bi bi-inbox me-1"></i>View Requests
-                </a>
-                {% else %}
-                <a href="#services" class="btn btn-primary btn-lg me-2">Explore Services</a>
-                <a href="{{ url_for('service_form', service_id=1) }}" class="btn btn-outline-primary btn-lg">Request Service</a>
-                {% endif %}
-            </div>
-            <div class="col-md-5 d-none d-md-block">
-                <img src="https://via.placeholder.com/420x300" alt="service illustration" class="img-fluid rounded shadow">
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="services" class="py-5">
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h2 class="h3">
-                    {% if session.get('role') == 'client' %}
-                    Your Service: {{ session.get('service_type') }}
-                    {% else %}
-                    Our Services
-                    {% endif %}
-                </h2>
-                <p class="text-muted">
-                    {% if session.get('role') == 'client' %}
-                    This is your dedicated service page. Customers can book {{ session.get('service_type') }} services directly here.
-                    {% else %}
-                    Choose from our curated selection of services below.
-                    {% endif %}
-                </p>
-            </div>
-        </div>
-
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-            {% for service in services %}
-            <div class="col">
-                <div class="card h-100 service-card">
-                    <div class="card-body text-center">
-                        {% if service.name == 'Plumbing' %}
-                            <i class="bi bi-droplet-fill service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Electrical' %}
-                            <i class="bi bi-lightning-fill service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Carpentry' %}
-                            <i class="bi bi-hammer service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Cleaning' %}
-                            <i class="bi bi-brush service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Gardening' %}
-                            <i class="bi bi-flower1 service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Automotive' %}
-                            <i class="bi bi-car-front-fill service-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Ambulance' %}
-                            <i class="bi bi-hospital-fill service-icon emergency-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Police' %}
-                            <i class="bi bi-shield-fill-check service-icon emergency-icon" aria-hidden="true"></i>
-                        {% elif service.name == 'Fire Fighter' %}
-                            <i class="bi bi-fire service-icon emergency-icon" aria-hidden="true"></i>
-                        {% endif %}
-                        <h5 class="card-title">{{ service.name }}</h5>
-                        <p class="card-text">{{ service.description }}</p>
-                        {% if session.get('role') == 'client' %}
-                            {% if service.name == session.get('service_type') %}
-                                {% if service.name in ['Ambulance', 'Police', 'Fire Fighter'] %}
-                                    <div class="alert alert-danger" role="alert">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        <strong>Emergency Service Active</strong><br>
-                                        <small>You are registered as an emergency service provider.</small>
-                                    </div>
-                                {% else %}
-                                    <div class="alert alert-success" role="alert">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        <strong>Your Registered Service</strong><br>
-                                        <small>Customers can book this service directly.</small>
-                                    </div>
-                                {% endif %}
-                            {% endif %}
-                        {% else %}
-                            {% if session.get('username') %}
-                                {% if service.name in ['Ambulance', 'Police', 'Fire Fighter'] %}
-                                    <a href="{{ url_for('service_form', service_id=service.id) }}" class="btn btn-danger w-100" aria-label="Request Emergency {{ service.name }}">
-                                        <i class="bi bi-telephone-fill me-2" aria-hidden="true"></i>Request Emergency
-                                    </a>
-                                {% else %}
-                                    <a href="{{ url_for('service_form', service_id=service.id) }}" class="btn btn-primary w-100" aria-label="Book {{ service.name }}">
-                                        <i class="bi bi-calendar-check me-2" aria-hidden="true"></i>Book Service
-                                    </a>
-                                {% endif %}
-                            {% else %}
-                                <a href="{{ url_for('login', next=url_for('service_form', service_id=service.id)) }}" class="btn btn-outline-primary w-100" aria-label="Sign in to book {{ service.name }}">
-                                    <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Sign in to Book
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceHub - Find & Provide Services</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="site-bg">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="bi bi-house-door me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>john_doe
+                            <small class="d-block text-muted" style="font-size:0.6rem">
+                                Client • Plumbing
+                            </small>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li>
+                                <a class="dropdown-item" href="/client/dashboard">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                    <small class="text-muted d-block">Plumbing</small>
                                 </a>
-                            {% endif %}
-                        {% endif %}
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/client/requests">
+                                    <i class="bi bi-inbox me-2"></i>Service Requests
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2"></i>Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Find & Provide
+                        <span class="text-primary">Services</span>
+                        in One Platform
+                    </h1>
+                    <p class="lead mb-4">
+                        ServiceHub connects customers with trusted service providers. Whether you need help or want to offer your skills, we make it simple and efficient.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#services" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search me-2"></i>Find Services
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-play-circle me-2"></i>How It Works
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="hero-image">
+                        <i class="bi bi-grid-3x3-gap"></i>
                     </div>
                 </div>
             </div>
-            {% endfor %}
-            
-            {% if session.get('role') == 'client' and services|length == 0 %}
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body text-center py-5">
-                        <i class="bi bi-tools display-1 text-muted mb-3"></i>
-                        <h4 class="text-muted">No Service Associated</h4>
-                        <p class="text-muted">Your account is not associated with any service type. Please contact support.</p>
-                        <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
-                    </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold mb-3">Our Services</h2>
+                    <p class="lead text-muted">Choose from a wide range of professional services</p>
                 </div>
             </div>
-            {% endif %}
-        </div>
-
-        {% if session.get('role') == 'client' %}
-        <div class="row mt-5">
-            <div class="col-12">
-                <div class="card bg-light">
-                    <div class="card-body text-center">
-                        <h4 class="mb-3">Service Provider Tools</h4>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <a href="{{ url_for('client_dashboard') }}" class="btn btn-primary w-100 py-3">
-                                    <i class="bi bi-speedometer2 display-6 d-block mb-2"></i>
-                                    Dashboard
-                                    <small class="d-block text-light opacity-75">Overview & Analytics</small>
-                                </a>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="service-icon mb-3">
+                                <i class="bi bi-tools"></i>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="{{ url_for('client_requests') }}" class="btn btn-success w-100 py-3">
-                                    <i class="bi bi-inbox display-6 d-block mb-2"></i>
-                                    All Requests
-                                    <small class="d-block text-light opacity-75">Manage Service Requests</small>
-                                </a>
+                            <h5 class="card-title">Plumbing</h5>
+                            <p class="card-text text-muted">
+                                Fix leaks, unclog drains, install fixtures, and handle all plumbing emergencies with certified professionals.
+                            </p>
+                            <div class="mt-3">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.8 (2.1k reviews)
+                                </span>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <a href="#" class="btn btn-info w-100 py-3">
-                                    <i class="bi bi-person display-6 d-block mb-2"></i>
-                                    Profile
-                                    <small class="d-block text-light opacity-75">Update Information</small>
-                                </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="service-icon mb-3">
+                                <i class="bi bi-lightning-charge"></i>
+                            </div>
+                            <h5 class="card-title">Electrical</h5>
+                            <p class="card-text text-muted">
+                                Electrical repairs, installations, lighting solutions, and safety inspections by licensed electricians.
+                            </p>
+                            <div class="mt-3">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.9 (1.8k reviews)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="card service-card h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="service-icon mb-3">
+                                <i class="bi bi-house-gear"></i>
+                            </div>
+                            <h5 class="card-title">Home Cleaning</h5>
+                            <p class="card-text text-muted">
+                                Deep cleaning, regular maintenance, and specialized cleaning services for your home or office.
+                            </p>
+                            <div class="mt-3">
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>4.7 (3.2k reviews)
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% endif %}
-    </div>
-</section>
-{% endblock %}
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-5 fw-bold mb-3">How It Works</h2>
+                    <p class="lead text-muted">Simple steps to get the service you need</p>
+                </div>
+            </div>
+            <div class="row g-4 text-center">
+                <div class="col-lg-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <i class="bi bi-search-step display-4 text-primary mb-3"></i>
+                        <h5>Find a Service</h5>
+                        <p class="text-muted">
+                            Browse through our categories and find the perfect service for your needs.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <i class="bi bi-chat-dots display-4 text-primary mb-3"></i>
+                        <h5>Request & Connect</h5>
+                        <p class="text-muted">
+                            Submit your service request and connect with qualified professionals.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <i class="bi bi-check-circle display-4 text-primary mb-3"></i>
+                        <h5>Get It Done</h5>
+                        <p class="text-muted">
+                            Review quotes, choose your provider, and get your service completed.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start mt-5">
+        <div class="container p-5">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+                    </h5>
+                    <p>
+                        Your one-stop platform for all services. Quick, reliable, and always there when you need us.
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact Us</h5>
+                    <p class="contact-info">
+                        <i class="bi bi-envelope-fill"></i>help@servicehub.com<br>
+                        <i class="bi bi-telephone-fill"></i>+91 98765 43210<br>
+                        <i class="bi bi-geo-alt-fill"></i>123 Service Street, Anytown, ST 12345
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3">
+            © 2025 ServiceHub | Made with <i class="bi bi-heart-fill text-danger"></i> for our community
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
