@@ -1,8 +1,4 @@
-{% extends "base.html" %}
-
-{% block title %}Register - ServiceHub{% endblock %}
-
-{% block content %}
+Register - ServiceHub
 <div class="row justify-content-center py-5">
     <div class="col-md-6">
         <div class="card shadow-sm">
@@ -25,9 +21,7 @@
                         <label for="service_type" class="form-label">Service Type *</label>
                         <select class="form-select" id="service_type" name="service_type">
                             <option value="">Select your service</option>
-                            {% for service in services %}
                             <option value="{{ service.name }}">{{ service.name }}</option>
-                            {% endfor %}
                         </select>
                         <div class="form-text">Select the service you provide</div>
                     </div>
@@ -74,4 +68,3 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleServiceType();
 });
 </script>
-{% endblock %}
