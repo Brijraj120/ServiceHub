@@ -11,14 +11,13 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="site-bg">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
+            <a class="navbar-brand" href="/">
                 <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -27,35 +26,30 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('index') }}">
+                        <a class="nav-link active" href="/">
                             <i class="bi bi-house-door me-1"></i>Home
                         </a>
                     </li>
                     <li class="nav-item dropdown ms-3">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-1"></i>{{ session.get('username') }}
-                                <small class="d-block text-muted" style="font-size:0.6rem">
-                                    {{ session.get('role')|capitalize }}
-                                        • {{ session.get('service_type') }}
-                                </small>
+                            <i class="bi bi-person-circle me-1"></i>john_doe
+                            <small class="d-block text-muted" style="font-size:0.6rem">
+                                Client • Plumbing
+                            </small>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                           
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('client_dashboard') }}">
+                                <a class="dropdown-item" href="/client/dashboard">
                                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                                    
-                                        <small class="text-muted d-block">{{ session.get('service_type') }}</small>
-                                    
+                                    <small class="text-muted d-block">Plumbing</small>
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('client_requests') }}">
+                                <a class="dropdown-item" href="/client/requests">
                                     <i class="bi bi-inbox me-2"></i>Service Requests
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
-                           
                             <li>
                                 <a class="dropdown-item" href="#">
                                     <i class="bi bi-person me-2"></i>Profile
@@ -63,34 +57,20 @@
                             </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <a class="dropdown-item" href="/logout">
                                     <i class="bi bi-box-arrow-right me-2"></i>Logout
                                 </a>
                             </li>
                         </ul>
                     </li>
-                    
-                    <li class="nav-item ms-3">
-                        <a class="nav-link" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    <li class="nav-item ms-2">
-                        <a class="btn btn-light btn-sm" href="{{ url_for('register') }}">Register</a>
-                    </li>
-                   
                 </ul>
             </div>
         </div>
     </nav>
-    <!-- Flashed messages -->
-    <div class="container mt-3">
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-    </div>
 
     <!-- Main Content -->
     <div class="container mt-5">
+        <!-- Content will be inserted here by child templates -->
     </div>
 
     <!-- Footer -->
