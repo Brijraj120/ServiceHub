@@ -1,68 +1,193 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respond to Request - ServiceHub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="site-bg">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            <i class="bi bi-house-door me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>john_doe
+                            <small class="d-block text-muted" style="font-size:0.6rem">
+                                Client • Plumbing
+                            </small>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                            <li>
+                                <a class="dropdown-item" href="/client/dashboard">
+                                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                                    <small class="text-muted d-block">Plumbing</small>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/client/requests">
+                                    <i class="bi bi-inbox me-2"></i>Service Requests
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person me-2"></i>Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="/logout">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-{% block title %}Respond to Request - ServiceHub{% endblock %}
-
-{% block content %}
-<div class="container-fluid py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-chat-dots me-2"></i>
-                        Respond to Service Request
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <!-- Request Details -->
-                    <div class="alert alert-light border">
-                        <h6 class="alert-heading">Request Details</h6>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <strong>Customer:</strong> {{ request.customer_name }}<br>
-                                <strong>Phone:</strong> {{ request.customer_phone }}<br>
-                                <strong>Email:</strong> {{ request.customer_email }}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Service:</strong> {{ request.service.name }}<br>
-                                <strong>Urgency:</strong> 
-                                <span class="badge bg-{% if request.urgency == 'Emergency' %}danger{% elif request.urgency == 'High' %}warning{% elif request.urgency == 'Medium' %}info{% else %}secondary{% endif %}">
-                                    {{ request.urgency or 'Normal' }}
-                                </span><br>
-                                <strong>Submitted:</strong> {{ request.created_at.strftime('%Y-%m-%d %H:%M') }}
-                            </div>
+    <div class="container mt-5">
+        <div class="container-fluid py-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-chat-dots me-2"></i>
+                                Respond to Service Request
+                            </h5>
                         </div>
-                        <hr>
-                        <strong>Address:</strong> {{ request.address }}<br>
-                        <strong>Description:</strong> {{ request.description or 'No additional details provided.' }}
+                        <div class="card-body">
+                            <!-- Request Details -->
+                            <div class="alert alert-light border">
+                                <h6 class="alert-heading">Request Details</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>Request ID:</strong> #101<br>
+                                        <strong>Customer:</strong> Sarah Johnson<br>
+                                        <strong>Phone:</strong> 555-0123<br>
+                                        <strong>Email:</strong> sarah@email.com
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Service:</strong> Plumbing<br>
+                                        <strong>Urgency:</strong> Medium<br>
+                                        <strong>Date:</strong> 2025-03-15<br>
+                                        <strong>Time:</strong> 10:30 AM
+                                    </div>
+                                </div>
+                                <hr>
+                                <strong>Issue Description:</strong>
+                                <p class="mb-0 mt-1">Leaky faucet in kitchen sink needs repair. Water has been dripping continuously for 2 days.</p>
+                            </div>
+
+                            <!-- Response Form -->
+                            <form method="post" action="/client/respond/101">
+                                <div class="mb-3">
+                                    <label for="responseType" class="form-label">Response Type</label>
+                                    <select class="form-select" id="responseType" name="response_type" required>
+                                        <option value="">Select response type...</option>
+                                        <option value="accepted">Accept Request</option>
+                                        <option value="declined">Decline Request</option>
+                                        <option value="more_info">Request More Information</option>
+                                        <option value="quote">Send Quote</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Your Response Message</label>
+                                    <textarea class="form-control" id="message" name="message" rows="6" placeholder="Type your response to the customer here..." required></textarea>
+                                    <div class="form-text">
+                                        Be clear and professional in your response. Include any questions, quotes, or next steps.
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="availability" class="form-label">Your Availability</label>
+                                    <input type="text" class="form-control" id="availability" name="availability" placeholder="e.g., Available weekdays 9 AM - 5 PM, weekends by appointment">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="estimated_cost" class="form-label">Estimated Cost (Optional)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="estimated_cost" name="estimated_cost" placeholder="0.00" step="0.01" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="estimated_time" class="form-label">Estimated Time (Optional)</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="estimated_time" name="estimated_time" placeholder="2" min="0">
+                                        <span class="input-group-text">hours</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="/client/requests" class="btn btn-outline-secondary me-md-2">
+                                        <i class="bi bi-arrow-left me-1"></i>Back to Requests
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-send me-1"></i>Send Response
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-
-                    <!-- Response Form -->
-                    <form method="post" action="{{ url_for('client_respond_request', req_id=request.id) }}">
-                        <div class="mb-4">
-                            <label for="message" class="form-label fw-semibold">
-                                <i class="bi bi-pencil me-1"></i>Your Response
-                            </label>
-                            <textarea class="form-control" id="message" name="message" rows="6" 
-                                      placeholder="Write your response to the customer. You can provide estimates, ask for more details, schedule an appointment, or provide instructions..."
-                                      required></textarea>
-                            <div class="form-text">
-                                This message will be sent to the customer. Be professional and clear in your communication.
-                            </div>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ url_for('client_requests') }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left me-1"></i>Back to Requests
-                            </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-send me-1"></i>Send Response
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start mt-5">
+        <div class="container p-5">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>ServiceHub
+                    </h5>
+                    <p>
+                        Your one-stop platform for all services. Quick, reliable, and always there when you need us.
+                    </p>
+                </div>
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact Us</h5>
+                    <p class="contact-info">
+                        <i class="bi bi-envelope-fill"></i>help@servicehub.com<br>
+                        <i class="bi bi-telephone-fill"></i>+91 98765 43210<br>
+                        <i class="bi bi-geo-alt-fill"></i>123 Service Street, Anytown, ST 12345
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3">
+            © 2025 ServiceHub | Made with <i class="bi bi-heart-fill text-danger"></i> for our community
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
